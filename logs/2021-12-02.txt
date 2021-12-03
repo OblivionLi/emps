@@ -1,0 +1,23 @@
+[02-Dec-2021 16:35:46 Europe/Berlin] Uncaught exception: 'Exception' with message 'Method indexxxAction not found in controller app\controllers\Posts'
+Stack trace: #0 D:\Work\xampp\htdocs\php-mvc-3.0\core\Router.php(66): core\Controller->__call('indexxx', Array)
+#1 D:\Work\xampp\htdocs\php-mvc-3.0\public\index.php(32): core\Router->dispatch('posts/indexxx')
+#2 {main}
+Thrown in 'D:\Work\xampp\htdocs\php-mvc-3.0\core\Controller.php' on line 21
+[02-Dec-2021 16:35:47 Europe/Berlin] Uncaught exception: 'Exception' with message 'Method indexxxAction not found in controller app\controllers\Posts'
+Stack trace: #0 D:\Work\xampp\htdocs\php-mvc-3.0\core\Router.php(66): core\Controller->__call('indexxx', Array)
+#1 D:\Work\xampp\htdocs\php-mvc-3.0\public\index.php(32): core\Router->dispatch('posts/indexxx')
+#2 {main}
+Thrown in 'D:\Work\xampp\htdocs\php-mvc-3.0\core\Controller.php' on line 21
+[02-Dec-2021 16:35:48 Europe/Berlin] Uncaught exception: 'Exception' with message 'Method indexxxAction not found in controller app\controllers\Posts'
+Stack trace: #0 D:\Work\xampp\htdocs\php-mvc-3.0\core\Router.php(66): core\Controller->__call('indexxx', Array)
+#1 D:\Work\xampp\htdocs\php-mvc-3.0\public\index.php(32): core\Router->dispatch('posts/indexxx')
+#2 {main}
+Thrown in 'D:\Work\xampp\htdocs\php-mvc-3.0\core\Controller.php' on line 21
+[02-Dec-2021 16:42:15 Europe/Berlin] Uncaught exception: 'Exception' with message 'No route found.'
+Stack trace: #0 D:\Work\xampp\htdocs\php-mvc-3.0\public\index.php(32): core\Router->dispatch('posts')
+#1 {main}
+Thrown in 'D:\Work\xampp\htdocs\php-mvc-3.0\core\Router.php' on line 74
+[02-Dec-2021 16:42:15 Europe/Berlin] Uncaught exception: 'Exception' with message 'No route found.'
+Stack trace: #0 D:\Work\xampp\htdocs\php-mvc-3.0\public\index.php(32): core\Router->dispatch('posts')
+#1 {main}
+Thrown in 'D:\Work\xampp\htdocs\php-mvc-3.0\core\Router.php' on line 74
