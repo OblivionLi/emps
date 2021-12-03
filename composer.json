@@ -4,5 +4,8 @@
             "core\\": "core/",
             "app\\": "app/"
         }
+    },
+    "require": {
+        "phpunit/phpunit": "^9.5"
     }
 }
