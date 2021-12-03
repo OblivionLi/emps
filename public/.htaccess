@@ -1,7 +1,7 @@
 <IfModule mod_rewrite.c>
   Options -Multiviews
   RewriteEngine On
-  RewriteBase /php-mvc-3.0/public
+  RewriteBase /emps/public
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteRule  ^(.+)$ index.php?$1 [QSA,L]
