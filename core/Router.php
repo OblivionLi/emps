@@ -2,7 +2,12 @@
 
 namespace core;
 
+use core\traits\LibraryTrait;
+
 class Router {
+
+    use LibraryTrait;
+
     protected $routes = [];
     protected $params = [];
 
@@ -73,14 +78,6 @@ class Router {
         } else {
             throw new \Exception('No route found.', 404);
         }
-    }
-
-    public function convertToStudlyCaps($string) {
-        return str_replace(' ', '', ucwords(str_replace('-', ' ', $string)));
-    }
-
-    public function convertToCamelCase($string) {
-        return lcfirst($this->convertToStudlyCaps($string));
     }
 
     protected function removeQueryStringVariables($url) {
