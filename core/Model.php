@@ -11,16 +11,12 @@ abstract class Model {
         static $db = null;
 
         if ($db === null) {
+            $dsn = 'mysql:host=' . Config::DB_HOST . ';dbname=' . Config::DB_NAME. ';charset=UTF8';
             try {
-                $dsn = 'mysql:host=' . Config::DB_HOST . ';dbname=' . Config::DB_NAME . ';charset=utf8';
-
-                $db = new PDO($dsn, Config::DB_USER, Config::DB_PASS);
-                $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-                return $db;
-
+                $options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
+                return new PDO($dsn, Config::DB_USER, Config::DB_PASS, $options);
             } catch (PDOException $e) {
-                echo $e->getMessage();
+                throw new \Exception($e->getMessage(), 500);
             }
         }
     }
