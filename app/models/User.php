@@ -14,6 +14,7 @@ class User extends Model {
     private $username;
     private $password;
     private $email;
+    private $last_time_visit;
     
     private $created_at;
     private $updated_at;
@@ -150,6 +151,29 @@ class User extends Model {
         }
     }
 
+    public static function update_last_time_visit($username) {
+        try {
+            $db = static::getDb();
+
+            $query = "UPDATE users
+                        SET 
+                            last_time_visit = NOW()
+                        WHERE
+                            username = :username
+                ";
+            
+            $stmt = $db->prepare($query);
+
+            // hash password before binding
+            $stmt->bindParam(':username', $username);
+
+            $stmt->execute();
+
+        } catch (PDOException $e) {
+            throw new \Exception($e->getMessage(), 500);
+        }
+    }
+
     public static function can_user_login($username, $password) {
         $user = self::find_by_username($username);
 
@@ -159,6 +183,9 @@ class User extends Model {
             if (password_verify($password, $user['password'])) {
                 // create session 
                 $_SESSION['username'] = $username;
+
+                // update last time visit
+                self::update_last_time_visit($username);
 
                 // return true if passwords match
                 return true;
