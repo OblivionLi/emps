@@ -4,7 +4,7 @@ namespace app\controllers;
 
 use app\models\PasswordReset;
 use app\models\SendEmail;
-use app\models\User;
+use app\models\user\User;
 use core\Controller;
 use core\traits\LibraryTrait;
 use core\View;
