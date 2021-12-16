@@ -25,12 +25,12 @@ class UserInfo extends Model
         try {
             $db = static::getDb();
 
-            $stmt = $db->query('SELECT 
+            $stmt = $db->query('SELECT
                                     *
-                                FROM 
-                                    user_infos 
-                                ORDER BY 
-                                    id 
+                                FROM
+                                    user_infos
+                                ORDER BY
+                                    id
                                 ASC');
 
             $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -49,30 +49,30 @@ class UserInfo extends Model
             $query = "INSERT INTO
                         user_infos
                             (
-                                user_id, 
+                                user_id,
                                 profile_avatar,
-                                profile_banner, 
-                                rank, 
-                                birthday_date, 
+                                profile_banner,
+                                rank,
+                                birthday_date,
                                 gender,
-                                content_count, 
-                                community_reputation, 
-                                follower_count, 
-                                profile_views, 
-                                created_at, 
+                                content_count,
+                                community_reputation,
+                                follower_count,
+                                profile_views,
+                                created_at,
                                 updated_at
                             )
 
                     VALUES (
-                        :user_id, 
+                        :user_id,
                         :profile_avatar,
-                        :profile_banner, 
-                        :rank, 
-                        :birthday_date, 
+                        :profile_banner,
+                        :rank,
+                        :birthday_date,
                         :gender,
-                        :content_count, 
-                        :community_reputation, 
-                        :follower_count, 
+                        :content_count,
+                        :community_reputation,
+                        :follower_count,
                         :profile_views,
                         NOW(),
                         NOW()
@@ -94,6 +94,34 @@ class UserInfo extends Model
             $stmt->bindParam(':profile_views', $this->profile_views);
 
             $stmt->execute();
+        } catch (PDOException $e) {
+            throw new \Exception($e->getMessage(), 500);
+        }
+    }
+
+    public static function get_all_by_user_id($user_id)
+    {
+        try {
+            $db = static::getDb();
+
+            $query = 'SELECT
+                        *
+                        FROM
+                            user_infos
+
+                        WHERE
+                            user_id = :user_id
+                    ';
+
+            $stmt = $db->prepare($query);
+
+            $stmt->bindParam(':user_id', $user_id);
+
+            $stmt->execute();
+
+            $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return $results;
         } catch (PDOException $e) {
             throw new \Exception($e->getMessage(), 500);
         }
