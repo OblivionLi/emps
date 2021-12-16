@@ -130,17 +130,22 @@ class UserInfos extends Controller
             // check if alerts array is empty
             if (empty($this->alerts)) {
 
-                $user_info = new UserInfo();
+                // get all records from user_infos table where user_id
+                $user_infos = UserInfo::get_all_by_user_id($user[0]); // here $user[0] means the id of the user
 
-                // TODO: limit creating new record in DB to 1 per user
+                // check count of records retrieved if its less than 1
+                // then add data to DB
+                if (count($user_infos) < 1) {
+                    $user_info = new UserInfo();
 
-                $user_info->set_user_id($user[0]); // here 0 return user id
-                $user_info->set_profile_avatar('/public/images/avatars/' . $avatar_filename);
-                $user_info->set_profile_banner('/public/images/banners/' . $banner_filename);
-                $user_info->set_birthday_date($date);
-                $user_info->set_gender($gender);
-                
-                $user_info->save();
+                    $user_info->set_user_id($user[0]); // here 0 return user id
+                    $user_info->set_profile_avatar('/public/images/avatars/' . $avatar_filename);
+                    $user_info->set_profile_banner('/public/images/banners/' . $banner_filename);
+                    $user_info->set_birthday_date($date);
+                    $user_info->set_gender($gender);
+                    
+                    $user_info->save();
+                } 
 
                 header('Location: ' . ROOT_PATH . '/');
             }
