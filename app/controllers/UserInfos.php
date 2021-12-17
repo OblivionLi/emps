@@ -14,8 +14,12 @@ class UserInfos extends Controller
 
     public function indexAction()
     {
+        // get user information
+        $user = User::find_by_username($_SESSION['username']);
+
         $data = [
             'errors' => $this->alerts,
+            'user'   => $user,
         ];
         View::render('user/userInfo.php', $data);
     }
@@ -29,21 +33,20 @@ class UserInfos extends Controller
             // get user information
             $user = User::find_by_username($_SESSION['username']);
 
-            // file target dir
-            $avatar_target_dir = $_SERVER['DOCUMENT_ROOT'] . '/emps/public/images/avatars';
-            $banner_target_dir = $_SERVER['DOCUMENT_ROOT'] . '/emps/public/images/banners';
-
             // placeholder for avatar/banner files to be uploaded using a for loop
-            $avatar_filename = '';
+            $avatar_filepath = '';
             $banner_filename = '';
-
+            
             // validate inputs
-            if (!empty($_FILES['profile_avatar'])) {
+            if ($_FILES['profile_avatar']['size'] != 0) {
+                // file target dir
+                $avatar_target_dir = $_SERVER['DOCUMENT_ROOT'] . '/emps';
+
                 // get file name with unique prefix defined by time and a random uniqid
-                $avatar_filename = time() . uniqid(rand()) . '-' . $_FILES['profile_avatar']['name'];
+                $avatar_filepath = '/public/images/avatars/' . time() . uniqid(rand()) . '-' . $_FILES['profile_avatar']['name'];
 
                 // get file extension
-                $filename_ext = strtolower(pathinfo($avatar_filename, PATHINFO_EXTENSION));
+                $filename_ext = strtolower(pathinfo($avatar_filepath, PATHINFO_EXTENSION));
 
                 // get file from input
                 $file = $_FILES['profile_avatar']['tmp_name'];
@@ -63,7 +66,7 @@ class UserInfos extends Controller
                     }
 
                     // make full destination path where the file will be uploaded
-                    $destination = $avatar_target_dir . '/' . $avatar_filename;
+                    $destination = $avatar_target_dir . $avatar_filepath;
 
                     // check if avatar file already exists in DB 
                     if (!$user['profile_avatar']) {
@@ -72,13 +75,38 @@ class UserInfos extends Controller
                         if (!move_uploaded_file($file, $destination)) {
                             array_push($this->alerts, "Failed to upload file.");
                         }
+                    } else {
+                        $fpath = $_SERVER['DOCUMENT_ROOT'] . '/emps/' . $user['profile_avatar'];
+                        $placeholder_path = '/public/images/avatars/placeholder.png';
+                        // check if file exists
+                        if (file_exists($fpath)) {
+                            if ($user['profile_avatar'] != $placeholder_path) {
+                                // delete old file
+                                unlink($fpath);
+                            }
+
+                            // check if move_uploaded_file is false, then throw error
+                            // else success
+                            if (!move_uploaded_file($file, $destination)) {
+                                array_push($this->alerts, "Failed to upload file.");
+                            }
+                        }
                     }
                 }
+            } else if ($user['profile_avatar'] && $_FILES['profile_avatar']['size'] == 0) {
+                $avatar_filepath = $user['profile_avatar'];
+            } else if (!$user['profile_avatar'] && $_FILES['profile_avatar']['size'] == 0) {
+                $avatar_filepath = '/public/images/avatars/placeholder.png';
+            } else {
+                $avatar_filepath = null;
             }
 
-            if (!empty($_FILES['profile_banner'])) {
+            if ($_FILES['profile_banner']['size'] != 0) {
+                // file directory
+                $banner_target_dir = $_SERVER['DOCUMENT_ROOT'] . '/emps';
+
                 // get file name with unique prefix defined by time and a random uniqid
-                $banner_filename = time() . uniqid(rand()) . '-' . $_FILES['profile_banner']['name'];
+                $banner_filename = '/public/images/banners/' . time() . uniqid(rand()) . '-' . $_FILES['profile_banner']['name'];
 
                 // get file extension
                 $filename_ext = strtolower(pathinfo($banner_filename, PATHINFO_EXTENSION));
@@ -101,7 +129,7 @@ class UserInfos extends Controller
                     }
 
                     // make full destination path where the file will be uploaded
-                    $destination = $banner_target_dir . '/' . $banner_filename;
+                    $destination = $banner_target_dir . $banner_filename;
                     
                     if (!$user['profile_banner']) {
                         // check if move_uploaded_file is false, then throw error
@@ -109,9 +137,31 @@ class UserInfos extends Controller
                         if (!move_uploaded_file($file, $destination)) {
                             array_push($this->alerts, "Failed to upload file.");
                         }
+                    } else {
+                        $fpath = $_SERVER['DOCUMENT_ROOT'] . '/emps/' . $user['profile_banner'];
+                        $placeholder_path = '/public/images/banners/placeholder.png';
+
+                        // check if file exists
+                        if (file_exists($fpath)) {
+                            if ($user['profile_banner'] != $placeholder_path) {
+                                // delete old file
+                                unlink($fpath);
+                            }
+
+                            // check if move_uploaded_file is false, then throw error
+                            // else success
+                            if (!move_uploaded_file($file, $destination)) {
+                                array_push($this->alerts, "Failed to upload file.");
+                            }
+                        }
                     }
                 }
-
+            } else if ($user['profile_banner'] && $_FILES['profile_banner']['size'] == 0) {
+                $banner_filename = $user['profile_banner'];
+            } else if (!$user['profile_banner'] && $_FILES['profile_banner']['size'] == 0) {
+                $banner_filename = '/public/images/banners/placeholder.png';
+            } else {
+                $banner_filename = null;
             }
 
             if (!empty($_POST['birthday_date'])) {
@@ -135,19 +185,21 @@ class UserInfos extends Controller
 
                 // check count of records retrieved if its less than 1
                 // then add data to DB
+                $user_info = new UserInfo();
+                
+                $user_info->set_user_id($user[0]); // here 0 return user id
+                $user_info->set_profile_avatar($avatar_filepath);
+                $user_info->set_profile_banner($banner_filename);
+                $user_info->set_birthday_date($date);
+                $user_info->set_gender($gender);
+                
                 if (count($user_infos) < 1) {
-                    $user_info = new UserInfo();
-
-                    $user_info->set_user_id($user[0]); // here 0 return user id
-                    $user_info->set_profile_avatar('/public/images/avatars/' . $avatar_filename);
-                    $user_info->set_profile_banner('/public/images/banners/' . $banner_filename);
-                    $user_info->set_birthday_date($date);
-                    $user_info->set_gender($gender);
-                    
                     $user_info->save();
-                } 
+                } else {
+                    $user_info->update();
+                }
 
-                header('Location: ' . ROOT_PATH . '/');
+                header('Location: ' . ROOT_PATH . '/userinfos/index');
             }
         }
 
