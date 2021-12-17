@@ -99,6 +99,36 @@ class UserInfo extends Model
         }
     }
 
+    public function update() {
+        try {
+            $db = static::getDb();
+
+            $query = "UPDATE user_infos
+                        SET 
+                            profile_avatar = :profile_avatar, 
+                            profile_banner = :profile_banner, 
+                            birthday_date = :birthday_date, 
+                            gender = :gender,
+                            updated_at = NOW()
+                        WHERE
+                            user_id = :user_id
+                ";
+            
+            $stmt = $db->prepare($query);
+
+            $stmt->bindParam(':user_id', $this->user_id);
+            $stmt->bindParam(':profile_avatar', $this->profile_avatar);
+            $stmt->bindParam(':profile_banner', $this->profile_banner);
+            $stmt->bindParam(':birthday_date', $this->birthday_date);
+            $stmt->bindParam(':gender', $this->gender);
+
+            $stmt->execute();
+
+        } catch (PDOException $e) {
+            throw new \Exception($e->getMessage(), 500);
+        }
+    }
+
     public static function get_all_by_user_id($user_id)
     {
         try {
