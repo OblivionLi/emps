@@ -136,6 +136,9 @@ class User extends Model {
                         LEFT JOIN 
                             user_infos
                             ON users.id = user_infos.user_id
+                        LEFT JOIN
+                            user_contacts
+                            ON users.id = user_contacts.user_id
                         WHERE 
                             username = :username
                         LIMIT 1;
